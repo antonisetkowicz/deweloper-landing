@@ -364,6 +364,10 @@
   }
   input:focus, select:focus { outline: none; border-color: var(--accent); }
   form .btn { align-self: flex-start; margin-top: 0.8rem; }
+  form .btn:disabled { opacity: 0.55; cursor: default; }
+  .honey { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .form-status { min-height: 1.2em; font-size: 0.88rem; color: var(--secondary); margin: 0; }
+  .form-status.is-error { color: #b0483a; }
   @media (max-width: 860px) { .contact { grid-template-columns: 1fr; } }
 
   footer {
@@ -565,24 +569,28 @@
     <div>
       <span class="eyebrow">Rys. 09 — kontakt</span>
       <h2 class="serif">Umów prywatne oglądanie</h2>
-      <form onsubmit="return false;">
+      <form id="viewing-form" action="https://formsubmit.co/ajax/biuro@linea-rezydencje.pl" method="POST">
+        <input type="hidden" name="_subject" value="Nowe zgłoszenie — prywatne oglądanie" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div>
           <label for="f-name">Imię i nazwisko</label>
-          <input id="f-name" type="text" placeholder="Jan Kowalski" required />
+          <input id="f-name" name="Imię i nazwisko" type="text" placeholder="Jan Kowalski" required />
         </div>
         <div>
           <label for="f-phone">Telefon</label>
-          <input id="f-phone" type="tel" placeholder="+48 600 000 000" required />
+          <input id="f-phone" name="Telefon" type="tel" placeholder="+48 600 000 000" required />
         </div>
         <div>
           <label for="f-villa">Wybierz willę</label>
-          <select id="f-villa">
+          <select id="f-villa" name="Wybrana willa">
             <option>Willa Cedrowa</option>
             <option>Willa Sosnowa</option>
             <option>Willa Lipowa</option>
           </select>
         </div>
         <button class="btn" type="submit">Zarezerwuj termin</button>
+        <p class="form-status" role="status" aria-live="polite"></p>
       </form>
     </div>
     <div class="contact-info">
@@ -667,6 +675,40 @@
 
     document.getElementById('cta-nav').addEventListener('click', function () {
       document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+    });
+  })();
+
+  (function () {
+    var form = document.getElementById('viewing-form');
+    var status = form.querySelector('.form-status');
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      status.classList.remove('is-error');
+      status.textContent = 'Wysyłanie…';
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: new FormData(form)
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error('request failed');
+          return res.json();
+        })
+        .then(function () {
+          status.textContent = 'Dziękujemy — odezwiemy się w ciągu 24 godzin, aby potwierdzić termin.';
+          form.reset();
+        })
+        .catch(function () {
+          status.classList.add('is-error');
+          status.textContent = 'Coś poszło nie tak. Zadzwoń do nas: +48 22 100 20 30.';
+        })
+        .finally(function () {
+          submitBtn.disabled = false;
+        });
     });
   })();
 </script>
