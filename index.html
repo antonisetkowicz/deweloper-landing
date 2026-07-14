@@ -225,31 +225,30 @@
     background: var(--stage-fill);
     opacity: var(--fade, 1);
   }
-  .plane {
+  .room .photo {
     position: absolute;
     inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
-  .plane svg {
     width: 100%;
     height: 100%;
-    max-width: 1400px;
-    color: var(--accent);
+    object-fit: cover;
+    transform: scale(calc(1 + var(--p, 0) * 0.16)) translateY(calc((1 - var(--p, 0)) * 1.2%));
+    filter: saturate(0.94) contrast(1.03);
+    will-change: transform;
   }
-  .plane--back {
-    transform: translate3d(0, calc((1 - var(--p, 0)) * 14px), -320px) scale(calc(1 + var(--p, 0) * 0.08));
-    opacity: calc(0.45 + var(--p, 0) * 0.55);
+  .room .scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(12, 10, 6, 0) 38%, rgba(12, 10, 6, 0.58) 78%, rgba(12, 10, 6, 0.82) 100%),
+      linear-gradient(0deg, rgba(12, 10, 6, 0.22), rgba(12, 10, 6, 0.22));
+    pointer-events: none;
   }
-  .plane--mid {
-    transform: translate3d(0, calc((1 - var(--p, 0)) * 26px), -90px) scale(calc(0.9 + var(--p, 0) * 0.3));
-  }
-  .plane--front {
-    transform: translate3d(0, calc(var(--p, 0) * 120px), 140px) scale(calc(1 + var(--p, 0) * 1.7));
-    opacity: calc(1 - var(--p, 0) * 1.15);
+  .room .frame-accent {
+    position: absolute;
+    inset: 26px;
+    border: 1px solid rgba(237, 230, 211, 0.38);
+    opacity: calc(0.35 + var(--p, 0) * 0.35);
+    pointer-events: none;
   }
   .room-copy {
     position: absolute;
@@ -258,9 +257,9 @@
     max-width: 30ch;
     z-index: 2;
   }
-  .room-copy .eyebrow { display: block; margin-bottom: 0.5rem; }
-  .room-copy h3 { font-size: clamp(1.8rem, 4.4vw, 3rem); }
-  .room-copy p { margin: 0.7rem 0 0; color: var(--ink-soft); font-size: 0.98rem; max-width: 34ch; }
+  .room-copy .eyebrow { display: block; margin-bottom: 0.5rem; color: #e3c98c; }
+  .room-copy h3 { font-size: clamp(1.8rem, 4.4vw, 3rem); color: #f5f0e3; }
+  .room-copy p { margin: 0.7rem 0 0; color: rgba(245, 240, 227, 0.78); font-size: 0.98rem; max-width: 34ch; }
   .room-spec {
     position: absolute;
     right: 2.6rem;
@@ -268,8 +267,8 @@
     text-align: right;
     z-index: 2;
   }
-  .room-spec .num { font-size: 1.1rem; }
-  .room-spec .label { display: block; font-size: 0.72rem; color: var(--ink-soft); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.2rem; }
+  .room-spec .num { font-size: 1.1rem; color: #f5f0e3; }
+  .room-spec .label { display: block; font-size: 0.72rem; color: rgba(245, 240, 227, 0.7); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.2rem; }
 
   .dots {
     position: fixed;
@@ -383,7 +382,7 @@
   @media (prefers-reduced-motion: reduce) {
     .room .stage { position: relative; height: auto; padding: 6rem 0; opacity: 1; }
     .room { height: auto; }
-    .plane--back, .plane--mid, .plane--front { transform: none !important; opacity: 1 !important; position: relative; }
+    .room .photo { transform: none !important; }
     .scroll-cue .bar { animation: none; }
   }
 </style>
@@ -428,27 +427,9 @@
 
   <section class="room" data-room="0" data-label="Wejście">
     <div class="stage">
-      <div class="plane plane--back">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.4">
-          <rect x="360" y="60" width="280" height="480" />
-          <line x1="500" y1="60" x2="500" y2="540" opacity="0.5" />
-          <line x1="380" y1="120" x2="480" y2="120" opacity="0.4" />
-          <line x1="520" y1="120" x2="620" y2="120" opacity="0.4" />
-          <circle cx="500" cy="300" r="150" opacity="0.15" />
-        </svg>
-      </div>
-      <div class="plane plane--mid">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.6">
-          <polyline points="60,600 360,300 640,300 940,600" opacity="0.55" />
-          <rect x="200" y="480" width="90" height="40" opacity="0.7" />
-          <line x1="205" y1="480" x2="205" y2="440" opacity="0.5" />
-        </svg>
-      </div>
-      <div class="plane plane--front">
-        <svg viewBox="0 0 1000 600" fill="var(--stage-fill)" stroke="currentColor" stroke-width="1.6">
-          <path d="M40,600 C40,500 120,470 180,470 C240,470 260,540 260,600 Z" opacity="0.9" />
-        </svg>
-      </div>
+      <img class="photo" src="images/01-wejscie.jpg" alt="Wejście do Willi Cedrowej — hol z drewnianymi drzwiami" loading="lazy" />
+      <div class="scrim"></div>
+      <div class="frame-accent"></div>
       <div class="room-copy">
         <span class="eyebrow">Rys. 01/06 — wejście</span>
         <h3 class="serif">Drzwi otwierają się na wysoki hol z widokiem aż po ogród.</h3>
@@ -462,27 +443,9 @@
 
   <section class="room" data-room="1" data-label="Hol">
     <div class="stage">
-      <div class="plane plane--back">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.4">
-          <rect x="420" y="140" width="160" height="360" opacity="0.6" />
-          <line x1="500" y1="140" x2="500" y2="500" opacity="0.3" />
-        </svg>
-      </div>
-      <div class="plane plane--mid">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.6">
-          <polyline points="20,560 420,220 580,220 980,560" opacity="0.5" />
-          <polyline points="640,560 640,340 900,240" opacity="0.7" />
-          <line x1="500" y1="150" x2="500" y2="60" opacity="0.6" />
-          <circle cx="500" cy="55" r="8" opacity="0.7" />
-        </svg>
-      </div>
-      <div class="plane plane--front">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.6">
-          <line x1="80" y1="140" x2="80" y2="600" opacity="0.8" />
-          <line x1="80" y1="170" x2="140" y2="170" opacity="0.6" />
-          <line x1="80" y1="200" x2="140" y2="200" opacity="0.6" />
-        </svg>
-      </div>
+      <img class="photo" src="images/02-hol.jpg" alt="Hol Willi Cedrowej — korytarz z drewnianą podłogą" loading="lazy" />
+      <div class="scrim"></div>
+      <div class="frame-accent"></div>
       <div class="room-copy">
         <span class="eyebrow">Rys. 02/06 — hol</span>
         <h3 class="serif">Schody z litego dębu prowadzą na piętro, światło wpada z lukarny.</h3>
@@ -496,30 +459,9 @@
 
   <section class="room" data-room="2" data-label="Salon">
     <div class="stage">
-      <div class="plane plane--back">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.3">
-          <rect x="120" y="100" width="760" height="360" opacity="0.6" />
-          <line x1="310" y1="100" x2="310" y2="460" opacity="0.3" />
-          <line x1="500" y1="100" x2="500" y2="460" opacity="0.3" />
-          <line x1="690" y1="100" x2="690" y2="460" opacity="0.3" />
-          <polygon points="740,420 770,360 800,420" opacity="0.35" />
-          <circle cx="670" cy="400" r="18" opacity="0.3" />
-        </svg>
-      </div>
-      <div class="plane plane--mid">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.7">
-          <rect x="150" y="380" width="140" height="140" opacity="0.7" />
-          <line x1="220" y1="380" x2="220" y2="140" opacity="0.6" />
-          <line x1="160" y1="330" x2="280" y2="330" opacity="0.4" />
-          <line x1="160" y1="280" x2="280" y2="280" opacity="0.4" />
-        </svg>
-      </div>
-      <div class="plane plane--front">
-        <svg viewBox="0 0 1000 600" fill="var(--stage-fill)" stroke="currentColor" stroke-width="1.6">
-          <path d="M600,600 C600,500 680,470 780,470 C880,470 940,500 960,600 Z" opacity="0.9" />
-          <ellipse cx="500" cy="590" rx="90" ry="18" opacity="0.5" fill="none" />
-        </svg>
-      </div>
+      <img class="photo" src="images/03-salon.jpg" alt="Salon Willi Cedrowej — kominek i strefa wypoczynkowa" loading="lazy" />
+      <div class="scrim"></div>
+      <div class="frame-accent"></div>
       <div class="room-copy">
         <span class="eyebrow">Rys. 03/06 — salon</span>
         <h3 class="serif">Kominek opalany drewnem i ściana przeszklona od podłogi po sufit.</h3>
@@ -533,30 +475,9 @@
 
   <section class="room" data-room="3" data-label="Kuchnia">
     <div class="stage">
-      <div class="plane plane--back">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.3">
-          <rect x="600" y="150" width="220" height="160" opacity="0.5" />
-          <polygon points="660,300 690,250 720,300" opacity="0.25" />
-          <polygon points="730,300 760,260 790,300" opacity="0.25" />
-        </svg>
-      </div>
-      <div class="plane plane--mid">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.7">
-          <rect x="300" y="380" width="360" height="90" opacity="0.75" />
-          <line x1="380" y1="380" x2="380" y2="180" opacity="0.55" />
-          <circle cx="380" cy="170" r="6" opacity="0.7" />
-          <line x1="480" y1="380" x2="480" y2="160" opacity="0.55" />
-          <circle cx="480" cy="150" r="6" opacity="0.7" />
-          <line x1="580" y1="380" x2="580" y2="180" opacity="0.55" />
-          <circle cx="580" cy="170" r="6" opacity="0.7" />
-        </svg>
-      </div>
-      <div class="plane plane--front">
-        <svg viewBox="0 0 1000 600" fill="var(--stage-fill)" stroke="currentColor" stroke-width="1.6">
-          <rect x="40" y="440" width="220" height="160" opacity="0.9" />
-          <circle cx="140" cy="430" r="26" opacity="0.85" fill="var(--stage-fill)" />
-        </svg>
-      </div>
+      <img class="photo" src="images/04-kuchnia.jpg" alt="Kuchnia Willi Cedrowej — wyspa z blatem marmurowym" loading="lazy" />
+      <div class="scrim"></div>
+      <div class="frame-accent"></div>
       <div class="room-copy">
         <span class="eyebrow">Rys. 04/06 — kuchnia</span>
         <h3 class="serif">Wyspa z blatem z kamienia, okno nad zlewem wychodzi na sad.</h3>
@@ -570,26 +491,9 @@
 
   <section class="room" data-room="4" data-label="Sypialnia">
     <div class="stage">
-      <div class="plane plane--back">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.3">
-          <rect x="620" y="90" width="260" height="340" opacity="0.55" />
-          <path d="M700,220 Q740,180 780,220 Q800,250 780,280" opacity="0.3" />
-        </svg>
-      </div>
-      <div class="plane plane--mid">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.7">
-          <rect x="220" y="360" width="360" height="120" opacity="0.75" />
-          <rect x="220" y="300" width="360" height="60" opacity="0.5" />
-          <rect x="150" y="400" width="50" height="50" opacity="0.6" />
-          <circle cx="175" cy="380" r="10" opacity="0.6" />
-        </svg>
-      </div>
-      <div class="plane plane--front">
-        <svg viewBox="0 0 1000 600" fill="var(--stage-fill)" stroke="currentColor" stroke-width="1.6">
-          <rect x="380" y="500" width="220" height="60" opacity="0.9" />
-          <line x1="120" y1="40" x2="120" y2="560" opacity="0.5" stroke="currentColor" fill="none" />
-        </svg>
-      </div>
+      <img class="photo" src="images/05-sypialnia.jpg" alt="Sypialnia główna Willi Cedrowej" loading="lazy" />
+      <div class="scrim"></div>
+      <div class="frame-accent"></div>
       <div class="room-copy">
         <span class="eyebrow">Rys. 05/06 — sypialnia</span>
         <h3 class="serif">Sypialnia główna z garderobą i widokiem na las za oknem.</h3>
@@ -603,30 +507,9 @@
 
   <section class="room" data-room="5" data-label="Taras">
     <div class="stage">
-      <div class="plane plane--back">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.2">
-          <line x1="0" y1="330" x2="1000" y2="330" opacity="0.4" />
-          <polygon points="120,330 150,260 180,330" opacity="0.3" />
-          <polygon points="200,330 235,240 270,330" opacity="0.3" />
-          <polygon points="760,330 790,270 820,330" opacity="0.3" />
-        </svg>
-      </div>
-      <div class="plane plane--mid">
-        <svg viewBox="0 0 1000 600" fill="none" stroke="currentColor" stroke-width="1.7">
-          <line x1="60" y1="120" x2="60" y2="420" opacity="0.5" />
-          <line x1="940" y1="120" x2="940" y2="420" opacity="0.5" />
-          <line x1="60" y1="120" x2="940" y2="120" opacity="0.5" />
-          <rect x="420" y="380" width="160" height="60" opacity="0.6" />
-          <line x1="200" y1="440" x2="260" y2="440" opacity="0.5" />
-          <line x1="200" y1="440" x2="200" y2="480" opacity="0.5" />
-          <line x1="260" y1="440" x2="260" y2="480" opacity="0.5" />
-        </svg>
-      </div>
-      <div class="plane plane--front">
-        <svg viewBox="0 0 1000 600" fill="var(--stage-fill)" stroke="currentColor" stroke-width="1.6">
-          <rect x="700" y="470" width="200" height="130" opacity="0.9" />
-        </svg>
-      </div>
+      <img class="photo" src="images/06-taras.jpg" alt="Taras i ogród przy Willi Cedrowej" loading="lazy" />
+      <div class="scrim"></div>
+      <div class="frame-accent"></div>
       <div class="room-copy">
         <span class="eyebrow">Rys. 06/06 — taras i ogród</span>
         <h3 class="serif">Taras schodzi do ogrodu, pergola daje cień o południu.</h3>
